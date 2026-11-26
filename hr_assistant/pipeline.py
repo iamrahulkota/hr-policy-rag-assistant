@@ -50,13 +50,13 @@ def build_hr_assistant(filepath: str = config.DATA_PATH):
 
     return agent
 
-def ask(agent, question: str) -> str:
-    """Ask the agent a question and return its final answer as plain text."""
-    response = agent.invoke({
-        "messages": [{
-            "role": "user",
-            "content": question
-        }]
-    })
+def ask(agent, question: str, history: list[dict] | None = None) -> str:
+    """
+    Ask the agent a question and return its final answer as plain text.
+    `history` is an optional list of earlier {"role", "content"} messages,
+    so follow-up questions have context (used by the streamlit UI).
+    """
+    messages = list(history or []) + [{"role": "user", "content": question}]
+    response = agent.invoke({"messages": messages})
     return response["messages"][-1].content
 
